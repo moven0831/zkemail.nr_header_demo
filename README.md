@@ -53,3 +53,40 @@ yarn android
 ```
 
 5. Adjust the # iterations and run benches by tapping "Prove Honk" 
+
+## Instructions for running bb CLI
+
+1. Compiling and executing `src/main.nr`
+The `Prover.toml` has already set and aligned with the test in `src/main.nr`
+
+```sh
+nargo execute
+```
+
+2. Generate Proof
+
+```sh
+bb prove -b ./target/zkemail_test.json -w ./target/zkemail_test.gz -o ./target
+```
+
+After the proof is generated, you can run the following command or use your OS GUI to check the size of the proof.
+
+```sh
+ls -lh target/proof
+```
+
+3. Verify Proof
+
+```sh
+# Generate the verification key and save to ./target/vk
+bb write_vk -b ./target/zkemail_test.json -o ./target
+
+# Verify the proof
+bb verify -k ./target/vk -p ./target/proof
+```
+
+Now, you should see the log as below
+```txt
+Scheme is: ultra_honk
+Proof verified successfully
+```

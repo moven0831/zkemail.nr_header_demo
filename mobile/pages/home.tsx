@@ -15,6 +15,7 @@ export default function Home() {
   const [circuitId, setCircuitId] = useState<string>('');
   const [iterations, setIterations] = useState<string>('');
   const [proving, setProving] = useState<number>(-1);
+  const [proofSize, setProofSize] = useState<number>(0);
 
   const handleInput = (text: string) => {
     if (proving > -1) return;
@@ -33,15 +34,24 @@ export default function Home() {
     setProving(0);
     const numIter = Number(iterations);
     let totalTime = 0;
+    let proofResult; // Variable to store the proof
     for (let i = 0; i < numIter; i++) {
       setProving(i + 1);
       const start = new Date().getTime() / 1000;
-      await generateProof(ZKEMAIL_INPUTS, circuitId!);
+      // Capture the proof result
+      proofResult = await generateProof(ZKEMAIL_INPUTS, circuitId!);
       const end = new Date().getTime() / 1000;
       totalTime += end - start;
     }
     const avgTime = totalTime / numIter;
     setAvgProvingTime(avgTime);
+    // Calculate and set the proof size
+    if (proofResult && proofResult.proofWithPublicInputs) {
+      // Use proofWithPublicInputs instead of proof
+      setProofSize(proofResult.proofWithPublicInputs.length); // Or .byteLength if appropriate
+    } else {
+      setProofSize(0); // Reset or handle error if proof is not generated
+    }
     setProving(-1);
   };
 
@@ -97,6 +107,17 @@ export default function Home() {
               textAlign: 'center',
             }}>
             Average proving time: {avgProvingTime.toFixed(4)} seconds
+          </Text>
+        )}
+        {proofSize > 0 && (
+          <Text
+            style={{
+              color: 'black',
+              fontWeight: '700',
+              marginTop: 10, // Adjust spacing as needed
+              textAlign: 'center',
+            }}>
+            Proof size: {proofSize} bytes
           </Text>
         )}
       </View>

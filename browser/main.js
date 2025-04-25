@@ -90,6 +90,11 @@ const prove = async (backend, inputs) => {
   const postWitnessGenerationTime = new Date().getTime() / 1000;
   console.log('generating proof');
   const proof = await backend.generateProof(witness);
+
+  console.log('Proof:', proof);
+  console.log(`Proof size: ${proof.proof.length} bytes`);
+  console.log(`Public inputs size: ${proof.publicInputs.length} bytes`);
+
   const postProofGenerationTime = new Date().getTime() / 1000;
   // await backend.verifyProof(proof);
   const postVerifyTime = new Date().getTime() / 1000;
